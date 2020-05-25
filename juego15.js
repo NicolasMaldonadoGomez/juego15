@@ -2,7 +2,7 @@ var ladoLienzoPixeles, ladoFicha, empezo=false
 var lienzo1   = document.getElementById("canvas")
 var contexto = lienzo1.getContext("2d")
 
-var  MILISEGUNDOS_REFRESCO = 20, CUADROS_PARA_MOVER = 3
+var  MILISEGUNDOS_REFRESCO = 25, CUADROS_PARA_MOVER = 3
 
 var modoVertical=1, modoHorizontal=1
 ficha = []
@@ -46,7 +46,7 @@ class PaneldeControl
                 let   xx3 = 1.10 * ladoLienzoPixeles,     yy3 = 0.08  * ladoLienzoPixeles
                 let radio = 0.07 * ladoLienzoPixeles
                 contexto.translate(xx3,yy3)
-                dibujaReloj(radio,contexto)
+                dibujaReloj(radio,contexto,empezo)
                 contexto.translate(-xx3,-yy3)
 
               }
@@ -178,6 +178,7 @@ class Juego15
           tamanoCanvas()
           this.empiezaJuego()
         }
+      if (empezo) this.iluminaFilasOrdenadas()
     }
   baraja()
             {
@@ -193,6 +194,7 @@ class Juego15
                   default: console.log("Uuuuyyyy!!")
                 }
               }
+              panel.cronometro = new Date
             }
   encuentraFicha (col,fil)
             {
@@ -362,6 +364,10 @@ class Juego15
                       this.baraja()
                   }
             }
+  iluminaFilasOrdenadas()
+            {
+
+            }
 }
 
 function componente(elAncho, elAlto, elcolor, xPosicion, yPosicion, elnumero,lacolumna,lafila)
@@ -427,39 +433,36 @@ function componente(elAncho, elAlto, elcolor, xPosicion, yPosicion, elnumero,lac
   }
 }
 
+function tamanoCanvas()
+{
+  var w = window.innerWidth
+  var h = window.innerHeight
+  if (w>h)
+  {
+    ladoLienzoPixeles = h - 20
+    modoHorizontal=1.2 //20% adicional para el panel de control
+    if ((ladoLienzoPixeles*modoHorizontal)>w) ladoLienzoPixeles=Math.floor(w/1.2)-10
+  }
+  else
+  {
+    modoVertical=1.2 //20% adicional para el panel de control
+    ladoLienzoPixeles = w - 20
+    if ((ladoLienzoPixeles*modoVertical)>h) ladoLienzoPixeles=Math.floor(h/1.2)-10
+  }
+  ladoFicha = (ladoLienzoPixeles)/tablerodeJuego.lado
+}
+
 tablerodeJuego = new Juego15
 tamanoCanvas()
 panel= new PaneldeControl
 window.addEventListener('keydown', function (e){tablerodeJuego.key = e.keyCode})
 window.addEventListener('click', tablerodeJuego.queque)
 
-function tamanoCanvas()
-  {
-    var w = window.innerWidth
-    var h = window.innerHeight
-    if (w>h)
-    {
-      ladoLienzoPixeles = h - 20
-      modoHorizontal=1.2 //20% adicional para el panel de control
-      if ((ladoLienzoPixeles*modoHorizontal)>w) ladoLienzoPixeles=Math.floor(w/1.2)-10
-    }
-    else
-      {
-        modoVertical=1.2 //20% adicional para el panel de control
-        ladoLienzoPixeles = w - 20
-        if ((ladoLienzoPixeles*modoVertical)>h) ladoLienzoPixeles=Math.floor(h/1.2)-10
-      }
-    ladoFicha = (ladoLienzoPixeles)/tablerodeJuego.lado
-  }
-
 //VAMOS POR LAS TECLAS
-
 
 //AHORA POR EL MOUSE
 
 //var puntero
-
-
 
 // Y PARA TERMINAR POR EL TOUCHSCREEN NO HUBO NECESIDAD, FUNCIONO CON EL CLIC DEL MOUSE
 /*window.addEventListener('touchend',toco)
@@ -474,6 +477,4 @@ function toco(toque)
 
     console.log("X "+ toque.pageX +" y dividio ladoFicha " + col)
     console.log("Y "+ toque.pageY +" y dividio ladoFicha " + fil)
-
-
 }*/

@@ -2,34 +2,43 @@
 const Angulo = Math.PI / 6
 
 
-function dibujaReloj(radio,contexto)
+function dibujaReloj(radio,contexto,empezo)
 {
   dibujaCaraReloj(radio,contexto)
   dibujaNumeros(radio,contexto)
-  dibujaHora(radio,contexto)
+  dibujaHora(radio,contexto,empezo)
 }
 
-function dibujaHora(radio,contexto)
+function dibujaHora(radio,contexto,empezo)
 {
   let hora     = new Date()
   let horas    = hora.getHours(); horas %= 12
   let minutos  = hora.getMinutes()
   let segundos = hora.getSeconds()
-  //var milisSi  = document.getElementById("milis").checked
   let milisegundos = hora.getMilliseconds()
 
-  //Para la hora
-  dibujaManecilla(0.5  * radio, 0.08  * radio, Angulo * (horas + minutos / 300),contexto)
-  //Para los minutos
-  dibujaManecilla(0.7  * radio, 0.06  * radio, Angulo *(minutos / 5 + segundos / 300),contexto)
-  //Para los segundos
-  dibujaManecilla(0.75 * radio, 0.035 * radio, Angulo * (segundos / 5 + milisegundos / 5000),contexto)
+  if (empezo)
+    {
+      let horaInicio         = panel.cronometro
+      let horasInicio        = horaInicio.getHours(); horas %= 12
+      let minutosInicio      = horaInicio.getMinutes()
+      let segundosInicio     = horaInicio.getSeconds()
+      let milisegundosInicio = horaInicio.getMilliseconds()
+      horas-=horasInicio
+      minutos-=minutosInicio
+      segundos-=segundosInicio
+      milisegundos-=milisegundosInicio
+      dibujaManecilla(0.85 * radio, 0.015 * radio, milisegundos * Angulo * 12 / 1000,contexto)
+    }
+    
+  dibujaManecilla(0.5  * radio, 0.08  * radio, Angulo * (horas + minutos / 300),contexto) //Para la hora
+  dibujaManecilla(0.7  * radio, 0.06  * radio, Angulo *(minutos / 5 + segundos / 300),contexto) //Para los minutos
+  dibujaManecilla(0.75 * radio, 0.035 * radio, Angulo * (segundos / 5 + milisegundos / 5000),contexto) //Para los segundos
   //textoHora.innerHTML = horas + ":" + minutos + ":" + segundos
   //para milisegundos
   //if (milisSi)
 
-  //dibujaManecilla(0.85 * radio, 0.015 * radio, milisegundos * Angulo * 12 / 1000,contexto)
-  //textoHora.innerHTML += ":" + milisegundos
+  //textoHora.innerHTML += ":" + milisegundos}
 }
 
 function dibujaManecilla(longitud, ancho, crono, lienzo)
