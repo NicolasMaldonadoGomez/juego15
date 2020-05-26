@@ -138,7 +138,7 @@ class Juego15
             }
   empiezaCanvas()
     {
-
+      empezo=false
       lienzo1.width = ladoLienzoPixeles*modoHorizontal;
       lienzo1.height = ladoLienzoPixeles*modoVertical;
       if (modoVertical>1) contexto.translate(0,(modoVertical-1)*ladoLienzoPixeles);
@@ -183,21 +183,22 @@ class Juego15
             {
               this.apagaRefrescoJuego()
               empezo = true
-
-              for (var i = 0; i < this.cuadros*this.lado*5; i++)
-              {
-                var azar=Math.floor(Math.random() * 4)
-                switch (azar) {
-                  case 0: this.palaIzquierda();this.key = false;  break;  //flecha izquierda
-                  case 1: this.paArriba();     this.key = false;  break;  //flecha arriba
-                  case 2: this.palaDerecha();  this.key = false;  break;  //flecha derecha
-                  case 3: this.paAbajo();      this.key = false;  break;
-                  default: console.log("Uuuuyyyy!!")
-                }
-              }
+              do{
+                for (var i = 0; i < this.cuadros*this.lado*6; i++)
+                  {
+                    var azar=Math.floor(Math.random() * 4)
+                    switch (azar) {
+                        case 0: this.palaIzquierda();this.key = false;  break;  //flecha izquierda
+                        case 1: this.paArriba();     this.key = false;  break;  //flecha arriba
+                        case 2: this.palaDerecha();  this.key = false;  break;  //flecha derecha
+                        case 3: this.paAbajo();      this.key = false;  break;
+                        default: console.log("Uuuuyyyy!!")
+                      }
+                  }
+                } while (this.encuentraFichasOrdenadas+1>this.cuadros)
               this.interval = setInterval(this.actualizaCanvas, MILISEGUNDOS_REFRESCO);
               this.encuentraFichasOrdenadas()
-              panel.cronometro = new Date
+              panel.cronometro = new Date()
             }
   encuentraFicha (col,fil)
             {
@@ -388,7 +389,23 @@ class Juego15
             }
   ganaJuego15()
             {
-              let ultimoMovimiento = setTimeout(this.apagaRefrescoJuego, MILISEGUNDOS_REFRESCO*CUADROS_PARA_MOVER+5)
+              let horaFinal     = new Date().getTime()
+              this.tiempoms     = horaFinal - panel.cronometro.getTime()
+
+              let horas        = Math.floor((this.tiempoms % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+              let minutos      = Math.floor((this.tiempoms % (1000 * 60 * 60)) / (1000 * 60))
+              let segundos     = Math.floor((this.tiempoms % (1000 * 60)) / 1000)
+              let milisegundos = Math.floor((this.tiempoms % (1000 * 60)) / 100)
+
+              horas    = (horas < 10)    ? "0" + horas    : horas
+              minutos  = (minutos < 10)  ? "0" + minutos  : minutos
+              segundos = (segundos < 10) ? "0" + segundos : segundos
+              milisegundos = (milisegundos < 100) ? (milisegundos < 10) ? "00" + milisegundos : "0" + milisegundos : milisegundos
+
+              let ultimoMovimiento = setTimeout(this.apagaRefrescoJuego, MILISEGUNDOS_REFRESCO*(CUADROS_PARA_MOVER+2))
+
+              avisaConMenu('¡¡ Muy bien. Ganaste.!!',`Superaste el nivel ${this.lado}.\n Lo hiciste en ${this.jugadas} jugadas.\nY te demoraste ${horas}h:${minutos}min:${segundos}s:${milisegundos}ms!!`,'imagenes/gokuDios.png')
+
 
             }
 }
@@ -407,66 +424,64 @@ function componente(elAncho, elAlto, elcolor, xPosicion, yPosicion, elnumero, la
     this.velY    =          0
     this.actualizaComponente = function()
       {
-      if(this.velX!=0)
-      {
-        this.x+=this.velX
-        if (Math.abs(Math.abs(this.x) - Math.abs(this.columna * ladoFicha))<0.2) this.velX = 0
-      }
+        if(this.velX!=0)
+          {
+            this.x+=this.velX
+            if (Math.abs(Math.abs(this.x) - Math.abs(this.columna * ladoFicha))<0.2) this.velX = 0
+          }
 
-      if(this.velY!=0)
-      {
-        this.y+=this.velY
-        if (Math.abs(Math.abs(this.y) - Math.abs(this.fila    * ladoFicha))<0.2) this.velY = 0
-      }
+        if(this.velY!=0)
+          {
+            this.y+=this.velY
+            if (Math.abs(Math.abs(this.y) - Math.abs(this.fila    * ladoFicha))<0.2) this.velY = 0
+          }
 
-      contexto.fillStyle = this.color;
-      contexto.fillRect(this.x, this.y, this.ancho, this.alto);
-      contexto.font = tablerodeJuego.tamanoFuente * this.alto + "px Helvetica, sans-serif"
-      contexto.textBaseline = "middle"
-      contexto.fillStyle = "black"
-      contexto.textAlign = "center"
-      contexto.lineWidth = 0.5
-      contexto.strokeStyle = "grey"
-      contexto.strokeRect(this.x, this.y, this.ancho, this.alto);
-      contexto.strokeStyle = "black"
-      contexto.lineWidth = 1
-      if (empezo)
-        {
-          if (this.numero<tablerodeJuego.ultimaFichaOrdenada)
-            {
-              if (this.fila<tablerodeJuego.ultimaFilaOrdenada)
-                dibujaCuadrado(this.x,this.y,ladoFicha,ladoFicha,1,contexto,"mediumseagreen")
-              else dibujaCuadrado(this.x,this.y,ladoFicha,ladoFicha,2,contexto,"mediumseagreen")
-            }
-          if(this.numero==(tablerodeJuego.ultimaFichaOrdenada))
-            dibujaCuadrado(this.x,this.y,ladoFicha,ladoFicha,2,contexto,"orangered")
-          if(this.numero==(tablerodeJuego.ultimaFichaOrdenada+1))
-            dibujaCuadrado(this.x,this.y,ladoFicha,ladoFicha,1,contexto,"orangered")
+        contexto.fillStyle = this.color;
+        contexto.fillRect(this.x, this.y, this.ancho, this.alto);
+        contexto.font = tablerodeJuego.tamanoFuente * this.alto + "px Helvetica, sans-serif"
+        contexto.textBaseline = "middle"
+        contexto.fillStyle = "black"
+        contexto.textAlign = "center"
+        contexto.lineWidth = 0.5
+        contexto.strokeStyle = "grey"
+        contexto.strokeRect(this.x, this.y, this.ancho, this.alto);
+        contexto.strokeStyle = "black"
+        contexto.lineWidth = 1
+        if (empezo)
+          {
+            if (this.numero<tablerodeJuego.ultimaFichaOrdenada)
+              {
+                if (this.fila<tablerodeJuego.ultimaFilaOrdenada)
+                  dibujaCuadrado(this.x,this.y,ladoFicha,ladoFicha,1,contexto,"mediumseagreen")
+                else dibujaCuadrado(this.x,this.y,ladoFicha,ladoFicha,2,contexto,"mediumseagreen")
+              }
+            if(this.numero==(tablerodeJuego.ultimaFichaOrdenada))
+              dibujaCuadrado(this.x,this.y,ladoFicha,ladoFicha,2,contexto,"orangered")
+            if(this.numero==(tablerodeJuego.ultimaFichaOrdenada+1))
+              dibujaCuadrado(this.x,this.y,ladoFicha,ladoFicha,1,contexto,"orangered")
 
-        }
-      contexto.strokeText(this.numero, this.x+this.ancho/2,this.y+this.alto/2 )
+          }
+        contexto.strokeText(this.numero, this.x+this.ancho/2,this.y+this.alto/2 )
     }
     this.mueve = function(nuevaColumna,nuevaFila)
       {
-      var ubicacionX = nuevaColumna * ladoFicha
-      var ubicacionY = nuevaFila *ladoFicha
+        var ubicacionX = nuevaColumna * ladoFicha
+        var ubicacionY = nuevaFila *ladoFicha
 
-      this.x = ubicacionX
-      this.y = ubicacionY
+        this.x = ubicacionX
+        this.y = ubicacionY
 
-      this.columna=nuevaColumna
-      this.fila=nuevaFila
-    }
+        this.columna=nuevaColumna
+        this.fila=nuevaFila
+      }
     this.mueveLento = function(nuevaColumna,nuevaFila)
       {
-
-      if      (nuevaColumna>this.columna)  this.velX =   ladoFicha /CUADROS_PARA_MOVER
-      else if (nuevaColumna<this.columna) this.velX = - ladoFicha /CUADROS_PARA_MOVER
-      else if (nuevaFila>this.fila)      this.velY =   ladoFicha /CUADROS_PARA_MOVER
-      else if (nuevaFila<this.fila)     this.velY = - ladoFicha /CUADROS_PARA_MOVER
-
-      this.columna=nuevaColumna
-      this.fila=nuevaFila
+        if      (nuevaColumna>this.columna)  this.velX =   ladoFicha /CUADROS_PARA_MOVER
+        else if (nuevaColumna<this.columna) this.velX = - ladoFicha /CUADROS_PARA_MOVER
+        else if (nuevaFila>this.fila)      this.velY =   ladoFicha /CUADROS_PARA_MOVER
+        else if (nuevaFila<this.fila)     this.velY = - ladoFicha /CUADROS_PARA_MOVER
+        this.columna=nuevaColumna
+        this.fila=nuevaFila
     }
   }
 

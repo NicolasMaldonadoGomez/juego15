@@ -1,5 +1,5 @@
 
-const Angulo = Math.PI / 6
+const ANGULO = Math.PI / 6
 
 
 function dibujaReloj(radio,contexto,empezo)
@@ -28,12 +28,12 @@ function dibujaHora(radio,contexto,empezo)
       minutos-=minutosInicio
       segundos-=segundosInicio
       milisegundos-=milisegundosInicio
-      dibujaManecilla(0.85 * radio, 0.015 * radio, milisegundos * Angulo * 12 / 1000,contexto)
+      dibujaManecilla(0.85 * radio, 0.015 * radio, milisegundos * ANGULO * 12 / 1000,contexto)
     }
-    
-  dibujaManecilla(0.5  * radio, 0.08  * radio, Angulo * (horas + minutos / 300),contexto) //Para la hora
-  dibujaManecilla(0.7  * radio, 0.06  * radio, Angulo *(minutos / 5 + segundos / 300),contexto) //Para los minutos
-  dibujaManecilla(0.75 * radio, 0.035 * radio, Angulo * (segundos / 5 + milisegundos / 5000),contexto) //Para los segundos
+
+  dibujaManecilla(0.5  * radio, 0.08  * radio, ANGULO * (horas + minutos / 300),contexto) //Para la hora
+  dibujaManecilla(0.7  * radio, 0.06  * radio, ANGULO *(minutos / 5 + segundos / 300),contexto) //Para los minutos
+  dibujaManecilla(0.75 * radio, 0.035 * radio, ANGULO * (segundos / 5 + milisegundos / 5000),contexto) //Para los segundos
   //textoHora.innerHTML = horas + ":" + minutos + ":" + segundos
   //para milisegundos
   //if (milisSi)
@@ -76,11 +76,11 @@ function dibujaNumeros(r,lienzo)
 
   for (var i = 1; i < 13; i++)
   {
-    lienzo.rotate(Angulo)
+    lienzo.rotate(ANGULO)
     lienzo.translate (0, -0.82 * r)
-    lienzo.rotate(-i*Angulo)   // para enderezar los numeros,
+    lienzo.rotate(-i*ANGULO)   // para enderezar los numeros,
     lienzo.fillText(i.toString(), 0, 0)
-    lienzo.rotate(i*Angulo) //  se pueden obviar para numeros concentricos
+    lienzo.rotate(i*ANGULO) //  se pueden obviar para numeros concentricos
     lienzo.translate(0,0.82 * r)
 
   }
