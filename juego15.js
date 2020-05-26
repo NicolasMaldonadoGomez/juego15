@@ -2,7 +2,7 @@ var ladoLienzoPixeles, ladoFicha, empezo=false
 var lienzo1   = document.getElementById("canvas")
 var contexto = lienzo1.getContext("2d")
 
-var  MILISEGUNDOS_REFRESCO = 25, CUADROS_PARA_MOVER = 3
+var  MILISEGUNDOS_REFRESCO = 20, CUADROS_PARA_MOVER = 3
 
 var modoVertical=1, modoHorizontal=1
 ficha = []
@@ -14,7 +14,7 @@ class PaneldeControl
                 this.muestraNivel()
                 this.muestraEscudo()
                 this.cargaEscudo=this.cargaEscudo.bind(this)
-                this.actualiza=this.actualiza.bind(this)
+                this.actualizaPanel=this.actualizaPanel.bind(this)
                 //this.muestraCrono=this.muestraCrono.bind(this)
 
               }
@@ -55,7 +55,6 @@ class PaneldeControl
                 let   xx1 = 1.03 * ladoLienzoPixeles,     yy1 = 0.75 * ladoLienzoPixeles
                 let   xx2 = 1.17 * ladoLienzoPixeles,     yy2 = 0.5  * ladoLienzoPixeles
                 let radio = 0.03 * ladoLienzoPixeles, espesor = 0.02 * ladoLienzoPixeles
-                console.log(ladoLienzoPixeles);
                 this.niveldeBola = new Dial(xx1, yy1, espesor,xx2, yy2, "GhostWhite", lienzo1,radio)
                 this.niveldeBola.prendeGraduacion(2,31,xx1,yy2,20,"GhostWhite")
 
@@ -78,18 +77,17 @@ class PaneldeControl
                       contexto.drawImage(this.escudo.imagen, 1.02*ladoLienzoPixeles,0.8*ladoLienzoPixeles-1, 0.157*ladoLienzoPixeles,0.2*ladoLienzoPixeles)
                     }
                 }
-    actualiza()
+    actualizaPanel()
               {
                 if(!empezo) this.muestraPuntaje()
                 if(!empezo) this.muestraBotonBaraja()
-                if(!empezo) this.niveldeBola.actualiza(lienzo1)
+                if(!empezo) this.niveldeBola.actualizaDial(lienzo1)
                 //this.pintaEscudo()
                 this.muestraCrono()
                 if(empezo) this.muestraJugadas()
               }
     muestraJugadas()
               {
-                console.log("empezo a mustrar las jugadas");
                 contexto.font = ladoLienzoPixeles*.08 + "px Helvetica, sans-serif"
                 contexto.textBaseline = "middle"
                 contexto.fillStyle = "GhostWhite"
@@ -111,6 +109,8 @@ class Juego15
 
               this.actualizaCanvas = this.actualizaCanvas.bind(this)
               this.queque = this.queque.bind(this)
+              this.ganaJuego15=this.ganaJuego15.bind(this)
+              this.apagaRefrescoJuego=this.apagaRefrescoJuego.bind(this)
               //this.empiezaJuego()
               this.lado         = 4
               //this.cuadros = this.lado**2
@@ -132,7 +132,6 @@ class Juego15
                 if (k%2==0) color = "SeaShell"
                 else color = "GhostWhite"
                 ficha [k] = new componente(ladoFicha, ladoFicha , color, ladoFicha*i, ladoFicha*j, k, i, j)
-                console.log(k);
               }
               ficha [this.cuadros].color = "black"
               this.empiezaCanvas();
@@ -152,8 +151,8 @@ class Juego15
   actualizaCanvas()
     {
       this.limpiaCanvas()
-      panel.actualiza()
-      for (let i=1;i<this.cuadros;i++) ficha[i].actualiza()
+      panel.actualizaPanel()
+      for (let i=1;i<this.cuadros;i++) ficha[i].actualizaComponente()
 
       if (this.key)
         switch (this.key)
@@ -173,27 +172,31 @@ class Juego15
         }
       if(this.lado!=panel.niveldeBola.grado) //Verifica si se movio la bola quu cuadra el nivel
         {
-          clearInterval(this.interval)
+          this.apagaRefrescoJuego()
           this.lado=panel.niveldeBola.grado
           tamanoCanvas()
           this.empiezaJuego()
         }
-      if (empezo) this.iluminaFilasOrdenadas()
+
     }
   baraja()
             {
+              this.apagaRefrescoJuego()
               empezo = true
-              for (var i = 0; i < this.cuadros*80; i++)
+
+              for (var i = 0; i < this.cuadros*this.lado*5; i++)
               {
                 var azar=Math.floor(Math.random() * 4)
                 switch (azar) {
-                  case 0: this.palaIzquierda();this.key = false; console.log("izq");  break;  //flecha izquierda
-                  case 1: this.paArriba();     this.key = false; console.log("arr");  break;  //flecha arriba
-                  case 2: this.palaDerecha();  this.key = false; console.log("der");  break;  //flecha derecha
-                  case 3: this.paAbajo();      this.key = false; console.log("der");  break;
+                  case 0: this.palaIzquierda();this.key = false;  break;  //flecha izquierda
+                  case 1: this.paArriba();     this.key = false;  break;  //flecha arriba
+                  case 2: this.palaDerecha();  this.key = false;  break;  //flecha derecha
+                  case 3: this.paAbajo();      this.key = false;  break;
                   default: console.log("Uuuuyyyy!!")
                 }
               }
+              this.interval = setInterval(this.actualizaCanvas, MILISEGUNDOS_REFRESCO);
+              this.encuentraFichasOrdenadas()
               panel.cronometro = new Date
             }
   encuentraFicha (col,fil)
@@ -212,6 +215,7 @@ class Juego15
                   ficha[this.cuadros].mueve(col-1,fil)
                   this.jugadas++
                 }
+              if (empezo) this.encuentraFichasOrdenadas()
             }
   lentoIzquierda()
             {
@@ -223,6 +227,7 @@ class Juego15
                   ficha[this.cuadros].mueve(col+1,fil)
                   this.jugadas++
                 }
+              if (empezo) this.encuentraFichasOrdenadas()
             }
   lentoAbajo()
             {
@@ -234,6 +239,7 @@ class Juego15
                   ficha[this.cuadros].mueve(col,fil-1)
                   this.jugadas++
                 }
+              if (empezo) this.encuentraFichasOrdenadas()
             }
   lentoArriba()
             {
@@ -245,6 +251,7 @@ class Juego15
                   ficha[this.cuadros].mueve(col,fil+1)
                   this.jugadas++
                 }
+              if (empezo) this.encuentraFichasOrdenadas()
             }
   palaDerecha()
             {
@@ -299,8 +306,6 @@ class Juego15
               let col = ficha [numeroFicha].columna
               let fil = ficha [numeroFicha].fila
               let movimientos
-
-              console.log("mueveclic "+col+", "+fil)
 
               if (this.queMover(numeroFicha)=="porfila")
                 {
@@ -364,93 +369,125 @@ class Juego15
                       this.baraja()
                   }
             }
-  iluminaFilasOrdenadas()
+  apagaRefrescoJuego()
             {
+              clearInterval(this.interval)
+            }
+  encuentraFichasOrdenadas()
+            {
+              let k=0,fil=0
+              bucle: for(fil=0;fil<this.lado;fil++)
+                for(let col=0;col<this.lado;col++)
+                  {
+                    k = this.lado*fil+col+1
+                    if (this.encuentraFicha(col,fil) != k) break bucle
+                  }
+              this.ultimaFilaOrdenada=fil
+              this.ultimaFichaOrdenada=k
+            if (k ==  this.cuadros) this.ganaJuego15()
+            }
+  ganaJuego15()
+            {
+              let ultimoMovimiento = setTimeout(this.apagaRefrescoJuego, MILISEGUNDOS_REFRESCO*CUADROS_PARA_MOVER+5)
 
             }
 }
 
-function componente(elAncho, elAlto, elcolor, xPosicion, yPosicion, elnumero,lacolumna,lafila)
-{
-  this.ancho   =    elAncho
-  this.alto    =     elAlto
-  this.x       =  xPosicion
-  this.y       =  yPosicion
-  this.numero  =   elnumero
-  this.color   =    elcolor
-  this.columna =  lacolumna
-  this.fila    =     lafila
-  this.velX    =          0
-  this.velY    =          0
-  this.actualiza = function()
-    {
-    if(this.velX!=0)
-    {
-      this.x+=this.velX
-      if (Math.abs(Math.abs(this.x) - Math.abs(this.columna * ladoFicha))<0.2) this.velX = 0
+function componente(elAncho, elAlto, elcolor, xPosicion, yPosicion, elnumero, lacolumna, lafila)
+  {
+    this.ancho   =    elAncho
+    this.alto    =     elAlto
+    this.x       =  xPosicion
+    this.y       =  yPosicion
+    this.numero  =   elnumero
+    this.color   =    elcolor
+    this.columna =  lacolumna
+    this.fila    =     lafila
+    this.velX    =          0
+    this.velY    =          0
+    this.actualizaComponente = function()
+      {
+      if(this.velX!=0)
+      {
+        this.x+=this.velX
+        if (Math.abs(Math.abs(this.x) - Math.abs(this.columna * ladoFicha))<0.2) this.velX = 0
+      }
+
+      if(this.velY!=0)
+      {
+        this.y+=this.velY
+        if (Math.abs(Math.abs(this.y) - Math.abs(this.fila    * ladoFicha))<0.2) this.velY = 0
+      }
+
+      contexto.fillStyle = this.color;
+      contexto.fillRect(this.x, this.y, this.ancho, this.alto);
+      contexto.font = tablerodeJuego.tamanoFuente * this.alto + "px Helvetica, sans-serif"
+      contexto.textBaseline = "middle"
+      contexto.fillStyle = "black"
+      contexto.textAlign = "center"
+      contexto.lineWidth = 0.5
+      contexto.strokeStyle = "grey"
+      contexto.strokeRect(this.x, this.y, this.ancho, this.alto);
+      contexto.strokeStyle = "black"
+      contexto.lineWidth = 1
+      if (empezo)
+        {
+          if (this.numero<tablerodeJuego.ultimaFichaOrdenada)
+            {
+              if (this.fila<tablerodeJuego.ultimaFilaOrdenada)
+                dibujaCuadrado(this.x,this.y,ladoFicha,ladoFicha,1,contexto,"mediumseagreen")
+              else dibujaCuadrado(this.x,this.y,ladoFicha,ladoFicha,2,contexto,"mediumseagreen")
+            }
+          if(this.numero==(tablerodeJuego.ultimaFichaOrdenada))
+            dibujaCuadrado(this.x,this.y,ladoFicha,ladoFicha,2,contexto,"orangered")
+          if(this.numero==(tablerodeJuego.ultimaFichaOrdenada+1))
+            dibujaCuadrado(this.x,this.y,ladoFicha,ladoFicha,1,contexto,"orangered")
+
+        }
+      contexto.strokeText(this.numero, this.x+this.ancho/2,this.y+this.alto/2 )
     }
+    this.mueve = function(nuevaColumna,nuevaFila)
+      {
+      var ubicacionX = nuevaColumna * ladoFicha
+      var ubicacionY = nuevaFila *ladoFicha
 
-    if(this.velY!=0)
-    {
-      this.y+=this.velY
-      if (Math.abs(Math.abs(this.y) - Math.abs(this.fila    * ladoFicha))<0.2) this.velY = 0
+      this.x = ubicacionX
+      this.y = ubicacionY
+
+      this.columna=nuevaColumna
+      this.fila=nuevaFila
     }
+    this.mueveLento = function(nuevaColumna,nuevaFila)
+      {
 
-    contexto.fillStyle = this.color;
-    contexto.fillRect(this.x, this.y, this.ancho, this.alto);
-    contexto.font = tablerodeJuego.tamanoFuente * this.alto + "px Helvetica, sans-serif"
-    contexto.textBaseline = "middle"
-    contexto.fillStyle = "black"
-    contexto.textAlign = "center"
-    contexto.lineWidth = 0.5
-    contexto.strokeStyle = "grey"
-    contexto.strokeRect(this.x, this.y, this.ancho, this.alto);
-    contexto.strokeStyle = "black"
-    contexto.lineWidth = 1
-    contexto.strokeText(this.numero, this.x+this.ancho/2,this.y+this.alto/2 )
+      if      (nuevaColumna>this.columna)  this.velX =   ladoFicha /CUADROS_PARA_MOVER
+      else if (nuevaColumna<this.columna) this.velX = - ladoFicha /CUADROS_PARA_MOVER
+      else if (nuevaFila>this.fila)      this.velY =   ladoFicha /CUADROS_PARA_MOVER
+      else if (nuevaFila<this.fila)     this.velY = - ladoFicha /CUADROS_PARA_MOVER
+
+      this.columna=nuevaColumna
+      this.fila=nuevaFila
+    }
   }
-  this.mueve = function(nuevaColumna,nuevaFila)
-    {
-    var ubicacionX = nuevaColumna * ladoFicha
-    var ubicacionY = nuevaFila *ladoFicha
-
-    this.x = ubicacionX
-    this.y = ubicacionY
-
-    this.columna=nuevaColumna
-    this.fila=nuevaFila
-  }
-  this.mueveLento = function(nuevaColumna,nuevaFila)
-    {
-
-    if      (nuevaColumna>this.columna)  this.velX =   ladoFicha /CUADROS_PARA_MOVER
-    else if (nuevaColumna<this.columna) this.velX = - ladoFicha /CUADROS_PARA_MOVER
-    else if (nuevaFila>this.fila)      this.velY =   ladoFicha /CUADROS_PARA_MOVER
-    else if (nuevaFila<this.fila)     this.velY = - ladoFicha /CUADROS_PARA_MOVER
-
-    this.columna=nuevaColumna
-    this.fila=nuevaFila
-  }
-}
 
 function tamanoCanvas()
-{
-  var w = window.innerWidth
-  var h = window.innerHeight
-  if (w>h)
   {
-    ladoLienzoPixeles = h - 20
-    modoHorizontal=1.2 //20% adicional para el panel de control
-    if ((ladoLienzoPixeles*modoHorizontal)>w) ladoLienzoPixeles=Math.floor(w/1.2)-10
+    var w = window.innerWidth
+    var h = window.innerHeight
+    if (w>h)
+    {
+      ladoLienzoPixeles = h - 20
+      modoHorizontal=1.2 //20% adicional para el panel de control
+      if ((ladoLienzoPixeles*modoHorizontal)>w) ladoLienzoPixeles=Math.floor(w/1.2)-10
+    }
+    else
+    {
+      modoVertical=1.2 //20% adicional para el panel de control
+      ladoLienzoPixeles = w - 20
+      if ((ladoLienzoPixeles*modoVertical)>h) ladoLienzoPixeles=Math.floor(h/1.2)-10
+    }
+    ladoFicha = (ladoLienzoPixeles)/tablerodeJuego.lado
   }
-  else
-  {
-    modoVertical=1.2 //20% adicional para el panel de control
-    ladoLienzoPixeles = w - 20
-    if ((ladoLienzoPixeles*modoVertical)>h) ladoLienzoPixeles=Math.floor(h/1.2)-10
-  }
-  ladoFicha = (ladoLienzoPixeles)/tablerodeJuego.lado
-}
 
 tablerodeJuego = new Juego15
 tamanoCanvas()
