@@ -6,7 +6,7 @@
 */ iluminar siguiente*
 */ boton de reiniciar*
 */ revisar los mensajes, que siempre salga a jugar y mejores puntajes*
-* temporizador para que salga la ayuda
+*/ temporizador para que salga la ayuda*
 * subir a githubpages
 
 funciones verbo en presente 3a persona
