@@ -1,9 +1,6 @@
 class PuntajeAGuardar {
   constructor(nivel)
             {
-              localStorage.removeItem("maximoNivelDeEsteJUEGO15")
-              localStorage.removeItem("mejorTiempoDeEsteJUEGO15")
-
               this.maximoPuntajeArchivo = "maximoNivelDeEsteJUEGO15-" + nivel
               this.mejorTiempoArchivo   = "mejorTiempoDeEsteJUEGO15-" + nivel
 

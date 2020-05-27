@@ -167,3 +167,16 @@ function distancia      (x1,y1,x2,y2)
     if(!y2) y2=0;
     return Math.sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1));
   }
+  function milisegundosaHoras(milis)
+  {
+    let horas           = Math.floor((milis % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+    let minutos         = Math.floor((milis % (1000 * 60 * 60))      / (1000 * 60))
+    let segundos        = Math.floor((milis % (1000 * 60))           / 1000)
+    let milisegundos    = Math.floor((milis % (1000 * 60))           / 100)
+
+    horas    = (horas < 10)    ? "0" + horas    : horas
+    minutos  = (minutos < 10)  ? "0" + minutos  : minutos
+    segundos = (segundos < 10) ? "0" + segundos : segundos
+    milisegundos = (milisegundos < 100) ? (milisegundos < 10) ? "00" + milisegundos : "0" + milisegundos : milisegundos
+    return(`${horas}h:${minutos}min:${segundos}s:${milisegundos}ms`)
+  }

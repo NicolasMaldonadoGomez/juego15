@@ -14,20 +14,20 @@ function avisaConMenu(titulo,texto,icono)
               text     : texto,
               icon     : icono,
               buttons  :  {
-                            botonCancela: {
-                                            text : "OK",
-                                            value: "cancela",
+                            botonMejores: {
+                                            text : "Mejores",
+                                            value: "mejores",
                                           },
                             botonAcerca:  {
-                                            text : "Acerca",
+                                            text : "Acerca de",
                                             value: "acerca",
                                           },
-                          /*  botonConfig:  {
-                                            text : "Configura",
-                                            value: "config",
-                                          },*/
+                            botonAyuda:  {
+                                            text : "Ayuda",
+                                            value: "ayuda",
+                                          },
                             botonJuega :  {
-                                            text : "A jugar otra vez...",
+                                            text : "Juega",
                                             value: "empieza",
                                           },
                           }
@@ -36,9 +36,9 @@ function avisaConMenu(titulo,texto,icono)
                                                                   break
                                                   case "acerca" : acercaDe()
                                                                   break
-                                                  case "config" : //configurar()
+                                                  case "ayuda" :  ayuda()
                                                                   break
-                                                  case "cancela":
+                                                  case "mejores": mejores()
                                                                   break
                                                  }
                                 })
@@ -46,8 +46,25 @@ function avisaConMenu(titulo,texto,icono)
 function ayuda()
   {
     //clearTimeout(cronoAyuda);
-    avisaConMenu("¿Ayuda?", "Para empezar presiona el botón de encendido en toda la mitad, aunque primero deberías configurar el tipo de juego y el sonido con el boton [Configura] abajo. \nAtajos: J y ENTER para jugar, C para configurar, Q es acerca de y A es esta ayuda.\nEl objetivo del juego es repetir una secuencia de colores cada vez mas larga, primero el computador, luego tú. ¡¡Trata de hacer la mayor cantidad de turnos sin equivocarte!!","imagenes/KarinDB.png")
+    avisaConMenu("¿Ayuda?", "Puedes usar las flechas o el mouse para mover las fichas.\nEl boton pequeño desliza para escoger el nivel. y el boton grande baraja (tambien la letra B).\nLa tecla A para llamar esta ayuda.\nEl tiempo comienza una vez se barajen las fichas, el objetivo es hacerlo en la menor cantidad de movimientos y en el menor tiempo.","imagenes/gokuPequeno.jpg")
   }
 function acercaDe(){
-  avisaConMenu("Juego 15, pero tambien 3, 8, 24, 35...", "Código por Nicolás Maldonado Gómez.\nemail: nico.m@gmx.es\nCronos Ingenieria\nweb: https://techzigurat.000webhostapp.com/.","imagenes/logoBlanco44.png")
+  avisaConMenu('Juego 15, pero tambien 3, 8, 24, 35...', 'Código por Nicolás Maldonado Gómez.\nnico.m@gmx.es\nCronos Ingenieria\nhttps://techzigurat.000webhostapp.com/.','imagenes/logoBlanco44.png')
+}
+function mejores() {
+  let texto=""
+  for(let i=0;i<29;i++)
+  {
+    mejores=new PuntajeAGuardar(i)
+    if (mejores.noSoportaStorage())
+      {
+        texto = "Lo siento, este navegador no soporta almacenamiento local, por lo que no quedarán grabados los mejores tiempos, y se perderán para siempre."
+        break
+      }
+    else
+      {
+        texto += (mejores.maximoPuntaje==0)?'':("Nivel " + (i+2) +" Jugadas: " + mejores.maximoPuntaje + ". Tiempo: " + milisegundosaHoras(mejores.mejorTiempo)+"\n")
+      }
+  }
+  avisaConMenu("Salon de la fama",texto,'imagenes/esfera4estrella.png')
 }

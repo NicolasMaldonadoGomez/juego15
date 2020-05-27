@@ -182,6 +182,7 @@ class Juego15
     }
   baraja()
             {
+              clearTimeout(a)
               this.apagaRefrescoJuego()
               empezo = true
               do{
@@ -393,7 +394,6 @@ class Juego15
             }
   encuentraFichasOrdenadas()
             {
-
               let k=0,fil=0
               bucle: for(fil=0;fil<this.lado;fil++)
                 for(let col=0;col<this.lado;col++)
@@ -410,15 +410,7 @@ class Juego15
               let horaFinal       = new Date().getTime()
               let jugadasyTiempos = new PuntajeAGuardar(this.lado-2)
               this.tiempoms       = horaFinal - panel.cronometro.getTime()
-              let horas           = Math.floor((this.tiempoms % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-              let minutos         = Math.floor((this.tiempoms % (1000 * 60 * 60))      / (1000 * 60))
-              let segundos        = Math.floor((this.tiempoms % (1000 * 60))           / 1000)
-              let milisegundos    = Math.floor((this.tiempoms % (1000 * 60))           / 100)
-
-              horas    = (horas < 10)    ? "0" + horas    : horas
-              minutos  = (minutos < 10)  ? "0" + minutos  : minutos
-              segundos = (segundos < 10) ? "0" + segundos : segundos
-              milisegundos = (milisegundos < 100) ? (milisegundos < 10) ? "00" + milisegundos : "0" + milisegundos : milisegundos
+              let tiempoh        = milisegundosaHoras(this.tiempoms)
 
               let ultimoMovimiento = setTimeout(this.apagaRefrescoJuego, MILISEGUNDOS_REFRESCO*(CUADROS_PARA_MOVER+2)) //Da tiempo para que la última ficha se acomode
 
@@ -427,22 +419,22 @@ class Juego15
 
                   if(jugadasyTiempos.comparayGuardaTiempo(this.tiempoms,this.lado-2))
                     {
-                      avisaConMenu('¡¡Excelente!! ¡¡Superaste todos los límites!!',`Ganaste el nivel ${this.lado}. ¡¡Rompiste el record de menor número de jugadas y de menor tiempo!!\nLo hiciste en ${this.jugadas} jugadas.\nY te demoraste ${horas}h:${minutos}min:${segundos}s:${milisegundos}ms!!`,'imagenes/gokuGana.jpg')
+                      avisaConMenu('¡¡Excelente!! ¡¡Superaste todos los límites!!',`Ganaste el nivel ${this.lado}. ¡¡Rompiste el record de menor número de jugadas y de menor tiempo!!\nLo hiciste en ${this.jugadas} jugadas.\nY te demoraste ${tiempoh}!!`,'imagenes/gokuGana.jpg')
                     }
                     else
                       {
-                        avisaConMenu('¡¡Excelente!! ¡¡Superaste el límite!!',`Ganaste el nivel ${this.lado}. Rompiste el record de menor número de jugadas\nLo hiciste en ${this.jugadas} jugadas.\nY te demoraste ${horas}h:${minutos}min:${segundos}s:${milisegundos}ms!!`,'imagenes/gokuAzul.png')
+                        avisaConMenu('¡¡Excelente!! ¡¡Superaste el límite!!',`Ganaste el nivel ${this.lado}. Rompiste el record de menor número de jugadas\nLo hiciste en ${this.jugadas} jugadas.\nY te demoraste ${tiempoh}!!`,'imagenes/gokuAzul.png')
                       }
                 }
                   else
                     {
                       if(jugadasyTiempos.comparayGuardaTiempo(this.tiempoms,this.lado))
                         {
-                          avisaConMenu('¡¡Excelente!! ¡¡Superaste el límite!!',`Ganaste el nivel ${this.lado}. También rompiste record de velocidad\nTereminaste en ${horas}h:${minutos}min:${segundos}s:${milisegundos}ms!!\nY lo hiciste en ${this.jugadas} jugadas.\n`,'imagenes/gokuGanaTiempo.png')
+                          avisaConMenu('¡¡Excelente!! ¡¡Superaste el límite!!',`Ganaste el nivel ${this.lado}. También rompiste record de velocidad\nTereminaste en ${tiempoh}!!\nY lo hiciste en ${this.jugadas} jugadas.\n`,'imagenes/gokuGanaTiempo.png')
                         }
                         else
                           {
-                            avisaConMenu('¡¡Muy bien!! ¡¡Ganaste!!',`Superaste el nivel ${this.lado}.\n Lo hiciste en ${this.jugadas} jugadas.\nY te demoraste ${horas}h:${minutos}min:${segundos}s:${milisegundos}ms!!`,'imagenes/gokuDios.png')
+                            avisaConMenu('¡¡Muy bien!! ¡¡Ganaste!!',`Superaste el nivel ${this.lado}.\n Lo hiciste en ${this.jugadas} jugadas.\nY te demoraste ${tiempoh}!!`,'imagenes/gokuDios.png')
                           }
                     }
             }
@@ -545,6 +537,7 @@ function tamanoCanvas()
 tablerodeJuego = new Juego15
 tamanoCanvas()
 panel= new PaneldeControl
+var a=setTimeout(ayuda,15000)
 window.addEventListener('keydown', function (e){tablerodeJuego.key = e.keyCode})
 window.addEventListener('click', tablerodeJuego.queque)
 
