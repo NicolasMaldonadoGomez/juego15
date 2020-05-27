@@ -41,7 +41,7 @@ function ayuda()
     avisaConMenu("¿Ayuda?", "Puedes usar las flechas o el mouse para mover las fichas.\nEl boton pequeño desliza para escoger el nivel. y el boton grande baraja (tambien la letra B).\nLa tecla A para llamar esta ayuda.\nEl tiempo comienza una vez se barajen las fichas, el objetivo es hacerlo en la menor cantidad de movimientos y en el menor tiempo.","imagenes/gokuPequeno.jpg")
   }
 function muestraAcercaDe(){
-  avisaConMenu('Juego 15, pero tambien 3, 8, 24, 35...', 'Código por Nicolás Maldonado Gómez.\nnico.m@gmx.es\nCronos Ingenieria\nhttps://techzigurat.000webhostapp.com/.','imagenes/logoBlanco44.png')
+  avisaConMenu('Juego del 15, pero también del 3, 8, 24, 35, 48... ¡hasta el 899!', 'Código por Nicolás Maldonado Gómez.\nnico.m@gmx.es\nCronos Ingenieria\nhttps://techzigurat.000webhostapp.com/.','imagenes/logoBlanco44.png')
 }
 function muestraMejores() {
   let texto=""
