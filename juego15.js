@@ -1,22 +1,19 @@
-var ladoLienzoPixeles, ladoFicha, empezo=false
-var lienzo1   = document.getElementById("canvas")
+var lienzo1  = document.getElementById("canvas")
 var contexto = lienzo1.getContext("2d")
-
-var  MILISEGUNDOS_REFRESCO = 20, CUADROS_PARA_MOVER = 3
-
+var ladoLienzoPixeles, ladoFicha, empezo=false
 var modoVertical=1, modoHorizontal=1
-ficha = []
+var ficha = []
+var  MILISEGUNDOS_REFRESCO = 20, CUADROS_PARA_MOVER = 3
 
 class PaneldeControl
   {
     constructor()
               {
                 this.muestraNivel()
-                this.muestraEscudo()
+                /*this.muestraEscudo()
                 this.cargaEscudo=this.cargaEscudo.bind(this)
                 this.actualizaPanel=this.actualizaPanel.bind(this)
-                //this.muestraCrono=this.muestraCrono.bind(this)
-
+                //this.muestraCrono=this.muestraCrono.bind(this)*/
               }
     muestraPuntaje()
               {
@@ -59,7 +56,7 @@ class PaneldeControl
                 this.niveldeBola.prendeGraduacion(2,31,xx1,yy2,20,"GhostWhite")
 
               }
-    muestraEscudo()
+  /*  muestraEscudo()
               {
                 this.escudo                = { url : "escudoMaldonado.png", }
                 this.escudo.imagen         = new Image()
@@ -76,7 +73,7 @@ class PaneldeControl
                     if (this.escudo.imagen.cargaOK) {
                       contexto.drawImage(this.escudo.imagen, 1.02*ladoLienzoPixeles,0.8*ladoLienzoPixeles-1, 0.157*ladoLienzoPixeles,0.2*ladoLienzoPixeles)
                     }
-                }
+                }*/
     actualizaPanel()
               {
                 if(!empezo) this.muestraPuntaje()
@@ -107,10 +104,11 @@ class Juego15
   constructor()
             {
 
-              this.actualizaCanvas = this.actualizaCanvas.bind(this)
-              this.queque = this.queque.bind(this)
-              this.ganaJuego15=this.ganaJuego15.bind(this)
-              this.apagaRefrescoJuego=this.apagaRefrescoJuego.bind(this)
+              this.apagaRefrescoJuego = this.apagaRefrescoJuego.bind(this)
+              this.actualizaCanvas    = this.actualizaCanvas.bind(this)
+              this.ganaJuego15        = this.ganaJuego15.bind(this)
+              this.queque             = this.queque.bind(this)
+              //this.ganaJuego15=this.ganaJuego15.bind(this)
               //this.empiezaJuego()
               this.lado         = 4
               //this.cuadros = this.lado**2
@@ -119,6 +117,9 @@ class Juego15
             }
   empiezaJuego()
             {
+              this.ultimaFilaOrdenada=0
+              this.ultimaFichaOrdenada=0
+              empezo=false
               this.cuadros = this.lado**2
               this.tamanoFuente=0.75
               if (this.lado>10) this.tamanoFuente = 0.5
@@ -141,8 +142,8 @@ class Juego15
       empezo=false
       lienzo1.width = ladoLienzoPixeles*modoHorizontal;
       lienzo1.height = ladoLienzoPixeles*modoVertical;
-      if (modoVertical>1) contexto.translate(0,(modoVertical-1)*ladoLienzoPixeles);
-      this.interval = setInterval(this.actualizaCanvas, MILISEGUNDOS_REFRESCO);
+      if (modoVertical>1) contexto.translate(0,(modoVertical-1)*ladoLienzoPixeles)
+      this.interval = setInterval(this.actualizaCanvas, MILISEGUNDOS_REFRESCO)
     }
   limpiaCanvas()
     {
@@ -157,13 +158,13 @@ class Juego15
       if (this.key)
         switch (this.key)
           {
-            case 37: this.lentoIzquierda(); this.key=false;  break  //flecha izquierda
-            case 38: this.lentoArriba();    this.key=false;  break  //flecha arriba
-            case 39: this.lentoDerecha();   this.key=false;  break  //flecha derecha
-            case 40: this.lentoAbajo();     this.key=false;  break  //flecha abajo
-            case 65: ayuda();               this.key=false;  break  //A
-            case 66: this.baraja();         this.key=false;  break  //B
-            default:                        this.key=false
+            case 37: this.lentoIzquierda();      this.key=false;  break  //flecha izquierda
+            case 38: this.lentoArriba();         this.key=false;  break  //flecha arriba
+            case 39: this.lentoDerecha();        this.key=false;  break  //flecha derecha
+            case 40: this.lentoAbajo();          this.key=false;  break  //flecha abajo
+            case 65: ayuda();                    this.key=false;  break  //A
+            case 66: if (!empezo) this.baraja(); this.key=false;  break  //B
+            default:                             this.key=false
           }
       if (this.clic)
         {
@@ -195,7 +196,7 @@ class Juego15
                         default: console.log("Uuuuyyyy!!")
                       }
                   }
-                } while (this.encuentraFichasOrdenadas+1>this.cuadros)
+                } while (this.ultimaFichaOrdenada==this.cuadros)
               this.interval = setInterval(this.actualizaCanvas, MILISEGUNDOS_REFRESCO);
               this.encuentraFichasOrdenadas()
               panel.cronometro = new Date()
@@ -216,7 +217,11 @@ class Juego15
                   ficha[this.cuadros].mueve(col-1,fil)
                   this.jugadas++
                 }
-              if (empezo) this.encuentraFichasOrdenadas()
+              if (empezo)
+                {
+                  this.encuentraFichasOrdenadas()
+                  if (this.ultimaFichaOrdenada ==  this.cuadros) this.ganaJuego15()
+                }
             }
   lentoIzquierda()
             {
@@ -228,7 +233,11 @@ class Juego15
                   ficha[this.cuadros].mueve(col+1,fil)
                   this.jugadas++
                 }
-              if (empezo) this.encuentraFichasOrdenadas()
+                if (empezo)
+                  {
+                    this.encuentraFichasOrdenadas()
+                    if (this.ultimaFichaOrdenada ==  this.cuadros) this.ganaJuego15()
+                  }
             }
   lentoAbajo()
             {
@@ -240,7 +249,11 @@ class Juego15
                   ficha[this.cuadros].mueve(col,fil-1)
                   this.jugadas++
                 }
-              if (empezo) this.encuentraFichasOrdenadas()
+                if (empezo)
+                  {
+                    this.encuentraFichasOrdenadas()
+                    if (this.ultimaFichaOrdenada ==  this.cuadros) this.ganaJuego15()
+                  }
             }
   lentoArriba()
             {
@@ -252,7 +265,11 @@ class Juego15
                   ficha[this.cuadros].mueve(col,fil+1)
                   this.jugadas++
                 }
-              if (empezo) this.encuentraFichasOrdenadas()
+                if (empezo)
+                  {
+                    this.encuentraFichasOrdenadas()
+                    if (this.ultimaFichaOrdenada ==  this.cuadros) this.ganaJuego15()
+                  }
             }
   palaDerecha()
             {
@@ -376,6 +393,7 @@ class Juego15
             }
   encuentraFichasOrdenadas()
             {
+
               let k=0,fil=0
               bucle: for(fil=0;fil<this.lado;fil++)
                 for(let col=0;col<this.lado;col++)
@@ -385,28 +403,48 @@ class Juego15
                   }
               this.ultimaFilaOrdenada=fil
               this.ultimaFichaOrdenada=k
-            if (k ==  this.cuadros) this.ganaJuego15()
+
             }
   ganaJuego15()
             {
-              let horaFinal     = new Date().getTime()
-              this.tiempoms     = horaFinal - panel.cronometro.getTime()
-
-              let horas        = Math.floor((this.tiempoms % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-              let minutos      = Math.floor((this.tiempoms % (1000 * 60 * 60)) / (1000 * 60))
-              let segundos     = Math.floor((this.tiempoms % (1000 * 60)) / 1000)
-              let milisegundos = Math.floor((this.tiempoms % (1000 * 60)) / 100)
+              let horaFinal       = new Date().getTime()
+              let jugadasyTiempos = new PuntajeAGuardar(this.lado-2)
+              this.tiempoms       = horaFinal - panel.cronometro.getTime()
+              let horas           = Math.floor((this.tiempoms % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+              let minutos         = Math.floor((this.tiempoms % (1000 * 60 * 60))      / (1000 * 60))
+              let segundos        = Math.floor((this.tiempoms % (1000 * 60))           / 1000)
+              let milisegundos    = Math.floor((this.tiempoms % (1000 * 60))           / 100)
 
               horas    = (horas < 10)    ? "0" + horas    : horas
               minutos  = (minutos < 10)  ? "0" + minutos  : minutos
               segundos = (segundos < 10) ? "0" + segundos : segundos
               milisegundos = (milisegundos < 100) ? (milisegundos < 10) ? "00" + milisegundos : "0" + milisegundos : milisegundos
 
-              let ultimoMovimiento = setTimeout(this.apagaRefrescoJuego, MILISEGUNDOS_REFRESCO*(CUADROS_PARA_MOVER+2))
+              let ultimoMovimiento = setTimeout(this.apagaRefrescoJuego, MILISEGUNDOS_REFRESCO*(CUADROS_PARA_MOVER+2)) //Da tiempo para que la última ficha se acomode
 
-              avisaConMenu('¡¡ Muy bien. Ganaste.!!',`Superaste el nivel ${this.lado}.\n Lo hiciste en ${this.jugadas} jugadas.\nY te demoraste ${horas}h:${minutos}min:${segundos}s:${milisegundos}ms!!`,'imagenes/gokuDios.png')
+              if(jugadasyTiempos.comparayGuardaPuntaje(this.jugadas))
+                {
 
-
+                  if(jugadasyTiempos.comparayGuardaTiempo(this.tiempoms,this.lado-2))
+                    {
+                      avisaConMenu('¡¡Excelente!! ¡¡Superaste todos los límites!!',`Ganaste el nivel ${this.lado}. ¡¡Rompiste el record de menor número de jugadas y de menor tiempo!!\nLo hiciste en ${this.jugadas} jugadas.\nY te demoraste ${horas}h:${minutos}min:${segundos}s:${milisegundos}ms!!`,'imagenes/gokuGana.jpg')
+                    }
+                    else
+                      {
+                        avisaConMenu('¡¡Excelente!! ¡¡Superaste el límite!!',`Ganaste el nivel ${this.lado}. Rompiste el record de menor número de jugadas\nLo hiciste en ${this.jugadas} jugadas.\nY te demoraste ${horas}h:${minutos}min:${segundos}s:${milisegundos}ms!!`,'imagenes/gokuAzul.png')
+                      }
+                }
+                  else
+                    {
+                      if(jugadasyTiempos.comparayGuardaTiempo(this.tiempoms,this.lado))
+                        {
+                          avisaConMenu('¡¡Excelente!! ¡¡Superaste el límite!!',`Ganaste el nivel ${this.lado}. También rompiste record de velocidad\nTereminaste en ${horas}h:${minutos}min:${segundos}s:${milisegundos}ms!!\nY lo hiciste en ${this.jugadas} jugadas.\n`,'imagenes/gokuGanaTiempo.png')
+                        }
+                        else
+                          {
+                            avisaConMenu('¡¡Muy bien!! ¡¡Ganaste!!',`Superaste el nivel ${this.lado}.\n Lo hiciste en ${this.jugadas} jugadas.\nY te demoraste ${horas}h:${minutos}min:${segundos}s:${milisegundos}ms!!`,'imagenes/gokuDios.png')
+                          }
+                    }
             }
 }
 
@@ -489,28 +527,26 @@ function tamanoCanvas()
   {
     var w = window.innerWidth
     var h = window.innerHeight
-    if (w>h)
-    {
+    //if (w>h)    { solo se hace horizontal por ahora, ya que no está funcionando en celular.
       ladoLienzoPixeles = h - 20
       modoHorizontal=1.2 //20% adicional para el panel de control
       if ((ladoLienzoPixeles*modoHorizontal)>w) ladoLienzoPixeles=Math.floor(w/1.2)-10
-    }
+    /*}
     else
     {
       modoVertical=1.2 //20% adicional para el panel de control
       ladoLienzoPixeles = w - 20
       if ((ladoLienzoPixeles*modoVertical)>h) ladoLienzoPixeles=Math.floor(h/1.2)-10
-    }
+    }*/
     ladoFicha = (ladoLienzoPixeles)/tablerodeJuego.lado
   }
+
 
 tablerodeJuego = new Juego15
 tamanoCanvas()
 panel= new PaneldeControl
 window.addEventListener('keydown', function (e){tablerodeJuego.key = e.keyCode})
 window.addEventListener('click', tablerodeJuego.queque)
-
-//VAMOS POR LAS TECLAS
 
 //AHORA POR EL MOUSE
 

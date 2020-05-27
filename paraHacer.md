@@ -1,11 +1,11 @@
 */ Cronometro cuando se baraja*
 */ Saber cuando acaba*
-* Acerca de,
-* guardar mejores puntajes
+*/ Acerca de*
+*/ guardar mejores puntajes
 */ iluminar ordenados y siguiente*
 */ iluminar siguiente*
-* boton de reiniciar
-* Que el cronometro empiece con el primer movimiento
+*/ boton de reiniciar*
+* revisar los mensajes, que siempre salga a jugar y mejores puntajes
 
 funciones verbo en presente 3a persona
 boleanos verbo pasado 3a persona
