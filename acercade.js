@@ -1,5 +1,7 @@
 function avisaConMenu(titulo,texto,icono)
   {
+    window.addEventListener('keydown', function (e){tablerodeJuego.key = e.keyCode})
+    window.addEventListener('click', tablerodeJuego.queque)
       swal(
             {
             title    : titulo,

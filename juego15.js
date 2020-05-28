@@ -18,12 +18,9 @@ class PaneldeControl
     muestraPuntaje()
               {
                 contexto.strokeStyle = "GhostWhite"
-                //tablerodeJuego.contexto.strokeStyle = "solid"
                 contexto.lineWidth = 1
                 contexto.strokeRect(0, 0, ladoLienzoPixeles,ladoLienzoPixeles);
                 contexto.strokeStyle = "white"
-
-                //tablerodeJuego.contexto.strokeRect(ladoLienzoPixeles,0,0.2*ladoLienzoPixeles,ladoLienzoPixeles);
 
                 contexto.fillStyle = "black";
                 contexto.fillRect(ladoLienzoPixeles,0,1.2*ladoLienzoPixeles,ladoLienzoPixeles );
@@ -31,11 +28,8 @@ class PaneldeControl
                 contexto.textBaseline = "middle"
                 contexto.fillStyle = "GhostWhite"
                 contexto.textAlign = "center"
-                //contexto.fillText("Movimientos", 1.1*ladoLienzoPixeles,0.01*ladoLienzoPixeles )
 
-                //dialdeFichas = new Dial(1.15*ladoLienzoPixeles,0.5*ladoLienzoPixeles,0.20*ladoLienzoPixeles,1.15*ladoLienzoPixeles,0.8*ladoLienzoPixeles,"red",tablerodeJuego.lienzo1,200)
-
-                contexto.strokeStyle = "black"// DEBE QUEDAR AL FINAL
+                contexto.strokeStyle = "black"
                 contexto.lineWidth = 1
               }
     muestraCrono()
@@ -45,7 +39,6 @@ class PaneldeControl
                 contexto.translate(xx3,yy3)
                 dibujaReloj(radio,contexto,empezo)
                 contexto.translate(-xx3,-yy3)
-
               }
     muestraNivel()
               {
@@ -54,7 +47,6 @@ class PaneldeControl
                 let radio = 0.03 * ladoLienzoPixeles, espesor = 0.02 * ladoLienzoPixeles
                 this.niveldeBola = new Dial(xx1, yy1, espesor,xx2, yy2, "GhostWhite", lienzo1,radio)
                 this.niveldeBola.prendeGraduacion(2,31,xx1,yy2,20,"GhostWhite")
-
               }
   /*  muestraEscudo()
               {
@@ -171,7 +163,7 @@ class Juego15
           this.mueveporClic()
           this.clic=false
         }
-      if(this.lado!=panel.niveldeBola.grado) //Verifica si se movio la bola quu cuadra el nivel
+      if(this.lado!=panel.niveldeBola.grado) //Verifica si se movio la bola que cuadra el nivel
         {
           this.apagaRefrescoJuego()
           this.lado=panel.niveldeBola.grado
@@ -197,7 +189,8 @@ class Juego15
                         default: console.log("Uuuuyyyy!!")
                       }
                   }
-                } while (this.ultimaFichaOrdenada==this.cuadros)
+                  this.encuentraFichasOrdenadas()
+                } while (this.ultimaFichaOrdenada == this.cuadros)
               this.interval = setInterval(this.actualizaCanvas, MILISEGUNDOS_REFRESCO);
               this.encuentraFichasOrdenadas()
               panel.cronometro = new Date()
@@ -364,13 +357,12 @@ class Juego15
                       }
                     }
                 }
-
             }
   queque(puntero)
             {
-              var posicion = lienzo1.getBoundingClientRect(); //trae los limites y tamaño del lienzo1
-              var alaX = posicion.left;//posición x del lienzo1 al borde de la pagina (izquierda)
-              var alaY = posicion.top;//posición y del lienzo1 al borde de la pagina (arriba)
+              var posicion = lienzo1.getBoundingClientRect() //trae los limites y tamaño del lienzo1
+              var alaX = posicion.left                     //posición x del lienzo1 al borde de la pagina (izquierda)
+              var alaY = posicion.top                    //posición y del lienzo1 al borde de la pagina (arriba)
               var posX = puntero.pageX-alaX
               var posY = puntero.pageY-alaY
 
@@ -378,7 +370,8 @@ class Juego15
                 {
                   let col=Math.floor((puntero.pageX-alaX)/ladoFicha)
                   let fil=Math.floor((posY-(modoVertical-1)*ladoLienzoPixeles)/ladoFicha) //se debe ajustar la distancia que se corrio el tablero por la inclusion de la zona de controles
-
+                  if (col<0) col=0 //Exsite un bug con el sweetalert, que cuando hace tambien marca un evento de clic del mouse
+                  if (fil<0) fil=0 //Que es problema, porque las coordenadas que da son 0,0, que en la formula anterior queda negativo y rompe la siguiente funcion
                    this.clic=true
                    this.cuadroClic = this.encuentraFicha(col,fil)
                }
@@ -390,7 +383,8 @@ class Juego15
             }
   apagaRefrescoJuego()
             {
-              clearInterval(this.interval)
+              clearInterval(this.interval);
+              //console.log("se apagó el refresco");
             }
   encuentraFichasOrdenadas()
             {
@@ -403,7 +397,6 @@ class Juego15
                   }
               this.ultimaFilaOrdenada=fil
               this.ultimaFichaOrdenada=k
-
             }
   ganaJuego15()
             {
@@ -412,11 +405,10 @@ class Juego15
               this.tiempoms       = horaFinal - panel.cronometro.getTime()
               let tiempoh        = milisegundosaHoras(this.tiempoms)
 
-              let ultimoMovimiento = setTimeout(this.apagaRefrescoJuego, MILISEGUNDOS_REFRESCO*(CUADROS_PARA_MOVER+2)) //Da tiempo para que la última ficha se acomode
+              /*let ultimoMovimiento = */setTimeout(this.apagaRefrescoJuego, MILISEGUNDOS_REFRESCO*(CUADROS_PARA_MOVER+2)) //Da tiempo para que la última ficha se acomode
 
               if(jugadasyTiempos.comparayGuardaPuntaje(this.jugadas))
                 {
-
                   if(jugadasyTiempos.comparayGuardaTiempo(this.tiempoms,this.lado-2))
                     {
                       avisaConMenu('¡¡Excelente!! ¡¡Superaste todos los límites!!',`Ganaste el nivel ${this.lado}. ¡¡Rompiste el record de menor número de jugadas y de menor tiempo!!\nLo hiciste en ${this.jugadas} jugadas.\nY te demoraste ${tiempoh}!!`,'imagenes/gokuGana.jpg')
